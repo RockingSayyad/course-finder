@@ -1,13 +1,37 @@
-jQuery('#filterForm').submit(function(e){
-    e.preventDefault();
+jQuery(document).ready(function($){
 
-    var formData = jQuery(this).serialize();
+    // FORM CHANGE / SUBMIT
+    $('#filterForm').on('keyup submit', function(e){
+        e.preventDefault();
 
-    jQuery.post(ajaxurl, {
-        action: 'filter_courses',
-        data: formData
-    }, function(response){
-        jQuery('#results').html(response);
+        loadCourses();
     });
+
+    function loadCourses(){
+
+        var formData = $('#filterForm').serialize();
+
+        $.ajax({
+            url: ajax_object.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'filter_courses',
+                data: formData
+            },
+            beforeSend: function(){
+                $('#results').html('<p>Loading...</p>');
+            },
+            success: function(response){
+                $('#results').html(response);
+            },
+            error: function(){
+                $('#results').html('<p>Error loading courses</p>');
+            }
+        });
+
+    }
+
+    // PAGE LOAD PE INITIAL DATA
+    loadCourses();
 
 });
